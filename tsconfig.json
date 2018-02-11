@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "forceConsistentCasingInFileNames": true,
+        "module": "es6",
+        "preserveConstEnums": true,
+        "pretty": true,
+        "removeComments": true,
+        "strict": true,
+        "target": "es6",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "es2015",
+            "es2016",
+            "es2017"
+        ]
+    }
+}
