@@ -8,19 +8,19 @@ export class SimpleCharacterControl extends Script {
 
     public update(deltaT: DOMHighResTimeStamp): void {
         if (Game.Input.isPressed('a')) {
-            this.target.x -= 5;
+            this.target.position.x -= 5;
         }
 
         if (Game.Input.isPressed('d')) {
-            this.target.x += 5;
+            this.target.position.x += 5;
         }
 
         if (Game.Input.isPressed('w')) {
-            this.target.y -= 5;
+            this.target.position.y -= 5;
         }
 
         if (Game.Input.isPressed('s')) {
-            this.target.y += 5;
+            this.target.position.y += 5;
         }
     }
 }

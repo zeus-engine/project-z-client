@@ -4,9 +4,7 @@ import { RenderingSystem } from '../Game/systems/RenderingSystem';
 import { ScriptingSystem } from '../Game/systems/ScriptingSystem';
 import { Camera } from '../Game/entities/Camera';
 import { CameraComponent } from '../Game/components/CameraComponent';
-import { ScriptComponent } from '../Game/components/ScriptComponent';
 import { MainCamera } from './MainCamera';
-import { CameraFollow } from '../Game/scripts/CameraFollow';
 import { TransformComponent } from '../Game/components/TransformComponent';
 
 export class MyGame extends Game {
