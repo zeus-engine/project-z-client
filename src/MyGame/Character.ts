@@ -1,39 +1,21 @@
 import { RenderingComponent } from '../Game/components/RenderingComponent';
-import { Rectangle } from '../Game/Rectangle';
+import { Rectangle } from '../Game/common/Rectangle';
 import { GameObject } from '../Game/entities/GameObject';
 import { ScriptComponent } from '../Game/components/ScriptComponent';
-import { Game } from '../Game/Game';
+import { SimpleCharacterControl } from '../Game/scripts/SimpleCharacterControl';
 
 export class Character extends GameObject {
-    rendering = new RenderingComponent(this);
-    script = new ScriptComponent(this);
+    private rendering = new RenderingComponent(this);
+    private script = new ScriptComponent<SimpleCharacterControl>(this);
 
     constructor() {
         super();
 
-        this.update = this.update.bind(this);
-
         this.addComponent(RenderingComponent, this.rendering);
         this.addComponent(ScriptComponent, this.script);
         this.rendering.setGraphics(new Rectangle(50, 100));
-        this.script.setScript(this.update);
-    }
+        this.script.setScript(SimpleCharacterControl);
 
-    private update(deltaT: DOMHighResTimeStamp): void {
-        if (Game.Input.isPressed('a')) {
-            this.transform.x -= 5;
-        }
-
-        if (Game.Input.isPressed('d')) {
-            this.transform.x += 5;
-        }
-
-        if (Game.Input.isPressed('w')) {
-            this.transform.y -= 5;
-        }
-
-        if (Game.Input.isPressed('s')) {
-            this.transform.y += 5;
-        }
+        this.script.getScript().target = this.transform;
     }
 }

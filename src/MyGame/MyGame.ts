@@ -1,7 +1,7 @@
 import { Game } from '../Game/Game';
 import { Character } from './Character';
 import { RenderingSystem } from '../Game/systems/RenderingSystem';
-import { ScriptSystem } from '../Game/systems/ScriptSystem';
+import { ScriptingSystem } from '../Game/systems/ScriptingSystem';
 
 export class MyGame extends Game {
     constructor() {
@@ -17,7 +17,7 @@ export class MyGame extends Game {
         document.body.appendChild(canvas);
 
         this.addSystem(RenderingSystem, new RenderingSystem(canvas));
-        this.addSystem(ScriptSystem, new ScriptSystem());
+        this.addSystem(ScriptingSystem, new ScriptingSystem());
         this.addEntity('character', new Character());
         this.run();
     }

@@ -1,16 +1,15 @@
 import { Component } from '../../Engine/Component';
 import { IGraphics } from '../IGraphics';
-import { Entity } from '../../Engine/Entity';
-import { NullGraphics } from '../NullGraphics';
+import { NullGraphics } from '../common/NullGraphics';
 
 export class RenderingComponent extends Component {
-    private graphics: IGraphics = NullGraphics;
+    private graphics: IGraphics = new NullGraphics();
 
     public setGraphics(graphics: IGraphics): void {
         this.graphics = graphics;
     }
 
     public getGraphics(): IGraphics {
-        return this.graphics
+        return this.graphics;
     }
 }

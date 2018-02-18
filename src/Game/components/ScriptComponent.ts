@@ -1,15 +1,16 @@
 import { Component } from '../../Engine/Component';
+import { Class } from '../../types/Class';
+import { NullScript } from '../scripts/NullScript';
+import { IScript } from '../IScript';
 
-type Script = (deltaT: DOMHighResTimeStamp) => void;
+export class ScriptComponent<T extends IScript> extends Component {
+    private script: T = new NullScript() as any;
 
-export class ScriptComponent extends Component {
-    private script: Script = () => undefined;
-
-    public setScript(script: Script): void {
-        this.script = script;
+    public setScript(scriptClass: Class<T>): void {
+        this.script = new scriptClass(this.getOwner());
     }
 
-    public getScript(): any {
+    public getScript(): T {
         return this.script;
     }
 }

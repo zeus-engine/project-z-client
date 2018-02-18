@@ -1,4 +1,4 @@
-import { IGraphics } from './IGraphics';
+import { IGraphics } from '../IGraphics';
 
 export class NullGraphics implements IGraphics {
 

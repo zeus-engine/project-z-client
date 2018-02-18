@@ -1,7 +1,7 @@
 import { RenderingComponent } from '../components/RenderingComponent';
 import { TransformComponent } from '../components/TransformComponent';
 import { IEntity } from '../../Engine/IEntity';
-import { Rectangle } from '../Rectangle';
+import { Rectangle } from '../common/Rectangle';
 import { System } from '../../Engine/System';
 
 export class RenderingSystem extends System {

@@ -1,4 +1,4 @@
-import { IGraphics } from './IGraphics';
+import { IGraphics } from '../IGraphics';
 
 export class Rectangle implements IGraphics {
     public width: number;
