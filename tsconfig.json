@@ -3,6 +3,7 @@
         "allowJs": false,
         "forceConsistentCasingInFileNames": true,
         "module": "es6",
+        "moduleResolution": "node",
         "preserveConstEnums": true,
         "pretty": true,
         "removeComments": true,

@@ -3,9 +3,13 @@ import { IEntity } from '../Engine/IEntity';
 import { ISystem } from '../Engine/ISystem';
 import { Class } from '../types/Class';
 import { Input } from './services/Input';
+import { ResourceManager } from './services/ResourceManager';
+import { SpriteManager } from './services/SpriteManager';
 
 export class Game {
     static readonly Input: Input = new Input();
+    static readonly ResourceManager = new ResourceManager();
+    static readonly SpriteManager = new SpriteManager(Game.ResourceManager);
 
     private engine: Engine;
     private entities: Map<string, IEntity> = new Map();

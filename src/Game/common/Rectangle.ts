@@ -1,6 +1,6 @@
-import { IGraphics } from '../IGraphics';
+import { IShape } from '../IShape';
 
-export class Rectangle implements IGraphics {
+export class Rectangle implements IShape {
     public width: number;
     public height: number;
     public color: string = '#0f0f00';
