@@ -1,10 +1,10 @@
 import { ISystem } from './ISystem';
-import { IEntity } from './IEntity';
+import { EntityManager } from '../Game/services/EntityManager';
 
 export class System implements ISystem {
-    update(entities: IEntity[], deltaT: DOMHighResTimeStamp): void {
+    update(entities: EntityManager, deltaT: DOMHighResTimeStamp): void {
     }
 
-    render(entities: IEntity[], deltaT: DOMHighResTimeStamp): void {
+    render(entities: EntityManager, deltaT: DOMHighResTimeStamp): void {
     }
 }

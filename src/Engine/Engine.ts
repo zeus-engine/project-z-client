@@ -3,13 +3,17 @@ import channel from 'chansole';
 type OnUpdate = (deltaT: DOMHighResTimeStamp) => void;
 type OnRender = (deltaT: DOMHighResTimeStamp) => void;
 
+enum EngineState {Running, Paused}
+
 export class Engine {
     private static DEFAULT_UPDATE_TIME = 1000 / 60;
     private static DEFAULT_RENDER_TIME = 1000 / 60;
+    private static performance = window.performance;
 
     private logger: Console;
-    private lastUpdate: DOMHighResTimeStamp = 0;
-    private lastRender: DOMHighResTimeStamp = 0;
+    private state: EngineState = EngineState.Running;
+    private lastUpdate: DOMHighResTimeStamp = Engine.performance.now();
+    private lastRender: DOMHighResTimeStamp = Engine.performance.now();
     private updateTime: number;
     private onUpdate: OnUpdate = () => undefined;
     private onRender: OnRender = () => undefined;
@@ -22,39 +26,47 @@ export class Engine {
 
         this.update = this.update.bind(this);
         this.render = this.render.bind(this);
+
+        this.update(this.lastUpdate);
+        this.render(this.lastRender);
+    }
+
+    public get isRunning(): boolean {
+        return this.state === EngineState.Running;
     }
 
     public run(): void {
-        const now = performance.now();
+        this.state = EngineState.Running;
+    }
 
-        this.lastUpdate = now;
-        this.lastRender = now;
-
-        this.update(now);
-        this.render(now);
+    public pause(): void {
+        this.state = EngineState.Paused;
     }
 
     private update(timestamp: DOMHighResTimeStamp): void {
-        this.onUpdate(timestamp - this.lastUpdate);
-        this.lastUpdate = performance.now();
+        if (this.state === EngineState.Running) {
+            this.onUpdate((timestamp - this.lastUpdate) / Engine.DEFAULT_UPDATE_TIME);
+        }
 
+        this.lastUpdate = Engine.performance.now();
         const deltaT = this.lastUpdate - timestamp;
 
         if (deltaT > Engine.DEFAULT_UPDATE_TIME) {
             this.logger.warn(`Update took ${deltaT}ms`);
         }
 
-        window.requestIdleCallback(() => {
-            this.update(performance.now());
-        }, {
-            timeout: this.updateTime
-        });
+        window.requestIdleCallback(
+            () => this.update(Engine.performance.now()),
+            { timeout: this.updateTime }
+        );
     }
 
     private render(timestamp: DOMHighResTimeStamp): void {
-        this.onRender(timestamp - this.lastRender);
-        this.lastRender = performance.now();
+        if (this.state === EngineState.Running) {
+            this.onRender((timestamp - this.lastRender) / Engine.DEFAULT_RENDER_TIME);
+        }
 
+        this.lastRender = Engine.performance.now();
         const deltaT = this.lastRender - timestamp;
 
         if (deltaT > Engine.DEFAULT_RENDER_TIME) {

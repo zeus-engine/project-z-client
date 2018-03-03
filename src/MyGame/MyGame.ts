@@ -16,6 +16,8 @@ export class MyGame extends Game {
         this.update = this.update.bind(this);
         this.render = this.render.bind(this);
 
+        this.createControls();
+
         Game.SpriteManager.register('character', '/assets/character.png');
         Game.SpriteManager.register('grass', '/assets/grass.jpg');
 
@@ -23,34 +25,49 @@ export class MyGame extends Game {
         this.addSystem(ScriptingSystem, new ScriptingSystem());
 
         const character = new Character();
-        const cameraA = new MainCamera(this.createCanvas());
+        const cameraA = new MainCamera(this.createCanvas(800, 600));
         const cameraB = new Camera();
 
         cameraA.setTarget(character.getComponent(TransformComponent));
-        cameraB.getComponent(CameraComponent).target = this.createCanvas();
+        cameraB.getComponent(CameraComponent).target = this.createCanvas(300, 300);
 
-        for (let y = 0; y < 10; y++) {
-            for(let x = 0; x < 10; x++) {
-                this.addEntity(`Terrain${x}${y}`, new Terrain(new Vector2(
-                    64 * x,
-                    64 * y
+        for (let y = 0; y < 20; y++) {
+            for (let x = 0; x < 20; x++) {
+                this.addEntity(`Terrain${x}-${y}`, new Terrain(new Vector2(
+                    65 * x,
+                    65 * y
                 )));
             }
         }
         this.addEntity('Character', character);
         this.addEntity('Main Camera', cameraA);
         this.addEntity('Second Camera', cameraB);
-        this.run();
+
+        // TODO should depends on the resources
+        setTimeout(() => this.pause(), 500);
     }
 
-    private createCanvas(): HTMLCanvasElement {
+    private createCanvas(width: number, height: number): HTMLCanvasElement {
         const canvas = document.createElement('canvas');
 
-        canvas.width = 400;
-        canvas.height = 300;
+        canvas.width = width;
+        canvas.height = height;
 
         document.body.appendChild(canvas);
 
         return canvas;
+    }
+
+    private createControls(): void {
+        const button = document.createElement('button');
+
+        button.textContent = '>';
+
+        button.addEventListener('click', () => {
+            this.isRunning
+                ? (this.pause(), button.textContent = '>')
+                : (this.run(), button.textContent = '||');
+        }, false);
+        document.body.appendChild(button);
     }
 }
