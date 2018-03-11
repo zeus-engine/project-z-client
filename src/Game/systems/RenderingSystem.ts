@@ -42,41 +42,38 @@ export class RenderingSystem extends System {
 
             this.offscreenCanvas.width = camera.target.width;
             this.offscreenCanvas.height = camera.target.height;
+            this.offscreenContext.setTransform(
+                1,
+                0,
+                0,
+                1,
+                cameraHalfWidth - cameraTransform.position.x,
+                cameraHalfHeight - cameraTransform.position.y
+            );
 
             if (RenderingSystem.debug === true) {
-                entityManager.render(
-                    this.offscreenContext,
-                    cameraTransform.position,
-                    cameraHalfWidth,
-                    cameraHalfHeight
-                );
+                entityManager.render(this.offscreenContext);
             }
 
             entityManager
                 .filterByRange(cameraA, cameraB)
-                .filter(entity =>
-                    (
-                        entity.hasComponent(ShapeRendererComponent) ||
-                        entity.hasComponent(SpriteRendererComponent)
-                    )
-                )
+                .filter(entity => (
+                    entity.hasComponent(ShapeRendererComponent) ||
+                    entity.hasComponent(SpriteRendererComponent)
+                ))
                 .forEach(entity => {
                     const transform = entity.getComponent(TransformComponent);
-                    const position = new Vector2(
-                        transform.position.x - cameraTransform.position.x + cameraHalfWidth,
-                        transform.position.y - cameraTransform.position.y + cameraHalfHeight
-                    );
 
                     if (entity.hasComponent(ShapeRendererComponent)) {
                         const renderer = entity.getComponent(ShapeRendererComponent);
 
-                        this.renderShape(this.offscreenContext, renderer, position);
+                        this.renderShape(this.offscreenContext, renderer, transform);
                     }
 
                     if (entity.hasComponent(SpriteRendererComponent)) {
                         const renderer = entity.getComponent(SpriteRendererComponent);
 
-                        this.renderSprite(this.offscreenContext, renderer, position);
+                        this.renderSprite(this.offscreenContext, renderer, transform);
                     }
                 });
 
@@ -89,26 +86,27 @@ export class RenderingSystem extends System {
     private renderShape(
         context: CanvasRenderingContext2D,
         renderer: ShapeRendererComponent,
-        position: Vector2
+        transform: TransformComponent
     ): void {
         const shape = renderer.getShape();
 
         if (shape instanceof Rectangle) {
-            this.renderRectangle(context, shape, position);
+            this.renderRectangle(context, shape, transform);
         }
     }
 
     private renderSprite(
         context: CanvasRenderingContext2D,
         renderer: SpriteRendererComponent,
-        position: Vector2
+        transform: TransformComponent
     ): void {
         const spriteReferense = renderer.getSprite();
         const sprite = Game.SpriteManager.get(spriteReferense);
 
         if (sprite !== null) {
-            const x = position.x - sprite.width * 0.5;
-            const y = position.y - sprite.height * 0.5;
+            const x = transform.position.x - sprite.width * 0.5;
+            const y = transform.position.y - sprite.height * 0.5;
+
             context.drawImage(
                 sprite,
                 0, 0, sprite.width, sprite.height,
@@ -120,13 +118,13 @@ export class RenderingSystem extends System {
     private renderRectangle(
         context: CanvasRenderingContext2D,
         rectangle: Rectangle,
-        position: Vector2
+        transform: TransformComponent
     ): void {
         context.strokeStyle = rectangle.color;
 
         context.strokeRect(
-            Math.round(position.x - rectangle.width * 0.5) + 0.5,
-            Math.round(position.y - rectangle.height * 0.5) + 0.5,
+            Math.round(transform.position.x - rectangle.width * 0.5) + 0.5,
+            Math.round(transform.position.y - rectangle.height * 0.5) + 0.5,
             Math.round(rectangle.width),
             Math.round(rectangle.height)
         );

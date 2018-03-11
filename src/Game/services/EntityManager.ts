@@ -53,13 +53,8 @@ export class EntityManager {
         return this.tree.findInRange(a, b);
     }
 
-    public render(
-        context: CanvasRenderingContext2D,
-        cameraPosition: Vector2,
-        cameraHalfWidth: number,
-        cameraHalfHeight: number
-    ): void {
-        this.tree.render(context, cameraPosition, cameraHalfWidth, cameraHalfHeight);
+    public render(context: CanvasRenderingContext2D): void {
+        this.tree.render(context);
     }
 
     private invalidate(): void {

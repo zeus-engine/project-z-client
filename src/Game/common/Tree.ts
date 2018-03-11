@@ -102,6 +102,39 @@ export class Tree<T> {
         return result;
     }
 
+    /*
+    * this method has a public descriptor only for the debug purposes
+    */
+    public render(context: CanvasRenderingContext2D): void {
+        const width = Math.abs(this.boundary.b.x - this.boundary.a.x) - this.level * 15;
+        const height = Math.abs(this.boundary.b.y - this.boundary.a.y) - this.level * 15;
+
+        context.fillStyle = `hsl(${20 * this.level}, 65%, 50%)`;
+
+        context.fillRect(
+            Math.round(this.boundary.a.x) + 0.5,
+            Math.round(this.boundary.a.y) + 0.5,
+            Math.round(width),
+            Math.round(height)
+        );
+
+        if (this.divided === false) {
+            return;
+        }
+
+        [
+            this.northWest,
+            this.northEast,
+            this.southWest,
+            this.southEast
+        ]
+            .forEach(child => {
+                if (child != null) {
+                    child.render(context);
+                }
+            });
+    }
+
     private divide(): void {
         const center = new Vector2(
             (this.boundary.a.x + this.boundary.b.x) * 0.5,
@@ -122,43 +155,5 @@ export class Tree<T> {
         this.southWest.position = 'SW';
         this.southEast.position = 'SE';
         this.divided = true;
-    }
-
-    /*
-    * this method has a public descriptor only for the debug purposes
-    */
-    public render(
-        context: CanvasRenderingContext2D,
-        cameraPosition: Vector2,
-        cameraHalfWidth: number,
-        cameraHalfHeight: number
-    ): void {
-        const width = Math.abs(this.boundary.b.x - this.boundary.a.x) - this.level * 15;
-        const height = Math.abs(this.boundary.b.y - this.boundary.a.y) - this.level * 15;
-
-        context.fillStyle = `hsl(${20 * this.level}, 65%, 50%)`;
-
-        context.fillRect(
-            Math.round(this.boundary.a.x - cameraPosition.x + cameraHalfWidth) + 0.5,
-            Math.round(this.boundary.a.y - cameraPosition.y + cameraHalfHeight) + 0.5,
-            Math.round(width),
-            Math.round(height)
-        );
-
-        if (this.divided === false) {
-            return;
-        }
-
-        [
-            this.northWest,
-            this.northEast,
-            this.southWest,
-            this.southEast
-        ]
-            .forEach(child => {
-                if (child != null) {
-                    child.render(context, cameraPosition, cameraHalfWidth, cameraHalfHeight);
-                }
-            });
     }
 }
