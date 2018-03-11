@@ -11,7 +11,7 @@ export class Character extends GameObject {
     private script = new ScriptComponent<SimpleCharacterControl>(this);
 
     constructor() {
-        super();
+        super('Character');
 
         this.addComponent(ShapeRendererComponent, this.shapeRenderer);
         this.addComponent(SpriteRendererComponent, this.spriteRenderer);

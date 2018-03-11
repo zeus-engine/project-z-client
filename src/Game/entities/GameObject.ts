@@ -4,9 +4,12 @@ import { IGameObject } from '../IGameObject';
 
 export class GameObject extends Entity implements IGameObject {
     public transform = new TransformComponent(this);
+    public name: string;
 
-    constructor() {
+    constructor(name: string = 'Game Object') {
         super();
+
+        this.name = name;
 
         this.addComponent(TransformComponent, this.transform);
     }

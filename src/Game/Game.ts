@@ -6,6 +6,7 @@ import { Input } from './services/Input';
 import { ResourceManager } from './services/ResourceManager';
 import { SpriteManager } from './services/SpriteManager';
 import { EntityManager } from './services/EntityManager';
+import { GameObject } from './entities/GameObject';
 
 export class Game {
     static readonly Input: Input = new Input();
@@ -39,11 +40,11 @@ export class Game {
         this.systems.set(systemType, system);
     }
 
-    public addEntity(alias: string, entity: IEntity): void {
-        this.entityManager.set(alias, entity);
+    public addEntity(entity: GameObject): void {
+        this.entityManager.set(entity);
     }
 
-    public getEntity(alias: string): IEntity | undefined {
+    public getEntity(alias: string): GameObject[] {
         return this.entityManager.get(alias);
     }
 

@@ -26,22 +26,22 @@ export class MyGame extends Game {
 
         const character = new Character();
         const cameraA = new MainCamera(this.createCanvas(800, 600));
-        const cameraB = new Camera();
+        const cameraB = new Camera('Second Camera');
 
         cameraA.setTarget(character.getComponent(TransformComponent));
         cameraB.getComponent(CameraComponent).target = this.createCanvas(300, 300);
 
-        for (let y = 0; y < 20; y++) {
-            for (let x = 0; x < 20; x++) {
-                this.addEntity(`Terrain${x}-${y}`, new Terrain(new Vector2(
-                    65 * x,
-                    65 * y
+        for (let y = 0; y < 10; y++) {
+            for (let x = 0; x < 10; x++) {
+                this.addEntity(new Terrain(new Vector2(
+                    66 * x,
+                    66 * y
                 )));
             }
         }
-        this.addEntity('Character', character);
-        this.addEntity('Main Camera', cameraA);
-        this.addEntity('Second Camera', cameraB);
+        this.addEntity(character);
+        this.addEntity(cameraA);
+        this.addEntity(cameraB);
 
         // TODO should depends on the resources
         setTimeout(() => this.pause(), 500);

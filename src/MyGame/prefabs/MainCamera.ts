@@ -8,7 +8,7 @@ export class MainCamera extends Camera {
     private script = new ScriptComponent<CameraFollow>(this);
 
     constructor(canvas: HTMLCanvasElement) {
-        super();
+        super('Main Camera');
 
         this.addComponent(ScriptComponent, this.script);
         this.script.setScript(CameraFollow);

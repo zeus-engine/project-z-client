@@ -9,6 +9,8 @@ import { Game } from '../Game';
 import { EntityManager } from '../services/EntityManager';
 
 export class RenderingSystem extends System {
+    private static debug = true;
+
     private offscreenCanvas: OffscreenCanvas;
     private offscreenContext: CanvasRenderingContext2D;
 
@@ -20,16 +22,8 @@ export class RenderingSystem extends System {
         this.offscreenContext.imageSmoothingEnabled = false;
     }
 
-    public render(entities: EntityManager, deltaT: DOMHighResTimeStamp): void {
-        const cameras = entities.filter(CameraComponent);
-        const renderable = entities
-            .filter(TransformComponent)
-            .filter(entity =>
-                (
-                    entity.hasComponent(ShapeRendererComponent) ||
-                    entity.hasComponent(SpriteRendererComponent)
-                )
-            );
+    public render(entityManager: EntityManager, deltaT: DOMHighResTimeStamp): void {
+        const cameras = entityManager.filterByComponents(CameraComponent);
 
         cameras.forEach(entity => {
             const camera = entity.getComponent(CameraComponent);
@@ -37,21 +31,35 @@ export class RenderingSystem extends System {
             const cameraTransform = entity.getComponent(TransformComponent);
             const cameraHalfWidth = camera.target.width * 0.5;
             const cameraHalfHeight = camera.target.height * 0.5;
+            const cameraA = new Vector2(
+                cameraTransform.position.x - cameraHalfWidth,
+                cameraTransform.position.y - cameraHalfHeight
+            );
+            const cameraB = new Vector2(
+                cameraTransform.position.x + cameraHalfWidth,
+                cameraTransform.position.y + cameraHalfHeight
+            );
 
             this.offscreenCanvas.width = camera.target.width;
             this.offscreenCanvas.height = camera.target.height;
 
-            renderable
-                .filter(entity => {
-                    const transform = entity.getComponent(TransformComponent);
+            if (RenderingSystem.debug === true) {
+                entityManager.render(
+                    this.offscreenContext,
+                    cameraTransform.position,
+                    cameraHalfWidth,
+                    cameraHalfHeight
+                );
+            }
 
-                    return (
-                        transform.position.x < cameraTransform.position.x + cameraHalfWidth &&
-                        transform.position.x > cameraTransform.position.x - cameraHalfWidth &&
-                        transform.position.y < cameraTransform.position.y + cameraHalfHeight &&
-                        transform.position.y > cameraTransform.position.y - cameraHalfHeight
+            entityManager
+                .filterByRange(cameraA, cameraB)
+                .filter(entity =>
+                    (
+                        entity.hasComponent(ShapeRendererComponent) ||
+                        entity.hasComponent(SpriteRendererComponent)
                     )
-                })
+                )
                 .forEach(entity => {
                     const transform = entity.getComponent(TransformComponent);
                     const position = new Vector2(
@@ -115,11 +123,12 @@ export class RenderingSystem extends System {
         position: Vector2
     ): void {
         context.strokeStyle = rectangle.color;
+
         context.strokeRect(
-            position.x - rectangle.width * 0.5,
-            position.y - rectangle.height * 0.5,
-            rectangle.width,
-            rectangle.height
+            Math.round(position.x - rectangle.width * 0.5) + 0.5,
+            Math.round(position.y - rectangle.height * 0.5) + 0.5,
+            Math.round(rectangle.width),
+            Math.round(rectangle.height)
         );
     }
 }

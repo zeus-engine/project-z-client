@@ -5,7 +5,7 @@ import { EntityManager } from '../services/EntityManager';
 export class ScriptingSystem extends System {
     update(entities: EntityManager, deltaT: DOMHighResTimeStamp) {
         entities
-            .filter(ScriptComponent)
+            .filterByComponents(ScriptComponent)
             .forEach(object => {
                 const scriptComponent = object.getComponent(ScriptComponent);
                 const script = scriptComponent.getScript();
