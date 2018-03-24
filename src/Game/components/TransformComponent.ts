@@ -4,4 +4,5 @@ import { Vector2 } from '../common/Vector2';
 
 export class TransformComponent extends Component implements ITransformComponent {
     public position: Vector2 = new Vector2(0, 0);
+    public scale: Vector2 = new Vector2(1, 1);
 }

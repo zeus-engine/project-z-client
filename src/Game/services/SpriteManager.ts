@@ -1,25 +1,30 @@
 import { ResourceManager } from './ResourceManager';
 import { ResourceType } from '../common/ResourceType';
+import { Sprite } from '../common/Sprite';
 
 type SpriteReference = string;
 
 export class SpriteManager {
     private resourceManager: ResourceManager;
-    private registry: Map<SpriteReference, ImageBitmap | null> = new Map();
+    private registry: Map<SpriteReference, Sprite> = new Map();
 
     constructor(resourceManager: ResourceManager) {
         this.resourceManager = resourceManager;
     }
 
     public register(identifier: SpriteReference, uri: string): void {
-        this.registry.set(identifier, null);
+        const sprite = new Sprite();
+
+        this.registry.set(identifier, sprite);
         this.resourceManager.register(ResourceType.Image, identifier, uri);
         this.resourceManager.get(identifier)
             .then(blob => createImageBitmap(blob))
-            .then(image => this.registry.set(identifier, image));
+            .then(image => {
+                sprite.texture = image;
+            });
     }
 
-    public get(identifier: SpriteReference): ImageBitmap | null {
+    public get(identifier: SpriteReference): Sprite {
         const sprite = this.registry.get(identifier);
 
         if (sprite === undefined) {

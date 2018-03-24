@@ -19,7 +19,10 @@ export class MyGame extends Game {
         this.createControls();
 
         Game.SpriteManager.register('character', '/assets/character.png');
-        Game.SpriteManager.register('grass', '/assets/grass.jpg');
+        Game.SpriteManager.register('grass', '/assets/grass.png');
+
+        Game.SpriteManager.get('character').pixelsPerUnit = 36;
+        Game.SpriteManager.get('grass').pixelsPerUnit = 36;
 
         this.addSystem(RenderingSystem, new RenderingSystem());
         this.addSystem(ScriptingSystem, new ScriptingSystem());
@@ -28,15 +31,15 @@ export class MyGame extends Game {
         const cameraA = new MainCamera(this.createCanvas(800, 600));
         const cameraB = new Camera('Second Camera');
 
-        cameraA.setTarget(character.getComponent(TransformComponent));
-        cameraB.getComponent(CameraComponent).target = this.createCanvas(300, 300);
+        cameraA.setTarget(character.transform);
+        cameraA.transform.scale = new Vector2(1, 1);
+        cameraA.camera.orthographicSize = 300 / 36;
+        cameraB.camera.target = this.createCanvas(300, 300);
+        cameraB.camera.orthographicSize = 150 / 18;
 
         for (let y = 0; y < 10; y++) {
             for (let x = 0; x < 10; x++) {
-                this.addEntity(new Terrain(new Vector2(
-                    66 * x,
-                    66 * y
-                )));
+                this.addEntity(new Terrain(new Vector2(x, y)));
             }
         }
         this.addEntity(character);

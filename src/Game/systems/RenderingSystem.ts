@@ -9,8 +9,8 @@ import { Game } from '../Game';
 import { EntityManager } from '../services/EntityManager';
 
 export class RenderingSystem extends System {
-    private static debug = true;
-
+    private static debug = false;
+    private static imageSmoothingEnabled = false;
     private offscreenCanvas: OffscreenCanvas;
     private offscreenContext: CanvasRenderingContext2D;
 
@@ -19,7 +19,7 @@ export class RenderingSystem extends System {
 
         this.offscreenCanvas = new OffscreenCanvas(0, 0);
         this.offscreenContext = this.offscreenCanvas.getContext('2d', { alpha: false });
-        this.offscreenContext.imageSmoothingEnabled = false;
+        this.offscreenContext.imageSmoothingEnabled = RenderingSystem.imageSmoothingEnabled;
     }
 
     public render(entityManager: EntityManager, deltaT: DOMHighResTimeStamp): void {
@@ -29,15 +29,14 @@ export class RenderingSystem extends System {
             const camera = entity.getComponent(CameraComponent);
             const cameraContext = camera.target.getContext('bitmaprenderer');
             const cameraTransform = entity.getComponent(TransformComponent);
-            const cameraHalfWidth = camera.target.width * 0.5;
-            const cameraHalfHeight = camera.target.height * 0.5;
+            const pixelsPerUnit = camera.halfHeight / camera.orthographicSize;
             const cameraA = new Vector2(
-                cameraTransform.position.x - cameraHalfWidth,
-                cameraTransform.position.y - cameraHalfHeight
+                cameraTransform.position.x - camera.orthographicSize,
+                cameraTransform.position.y - camera.orthographicSize
             );
             const cameraB = new Vector2(
-                cameraTransform.position.x + cameraHalfWidth,
-                cameraTransform.position.y + cameraHalfHeight
+                cameraTransform.position.x + camera.orthographicSize,
+                cameraTransform.position.y + camera.orthographicSize
             );
 
             this.offscreenCanvas.width = camera.target.width;
@@ -47,8 +46,8 @@ export class RenderingSystem extends System {
                 0,
                 0,
                 1,
-                cameraHalfWidth - cameraTransform.position.x,
-                cameraHalfHeight - cameraTransform.position.y
+                cameraTransform.position.x * -pixelsPerUnit + camera.halfWidth,
+                cameraTransform.position.y * -pixelsPerUnit + camera.halfHeight
             );
 
             if (RenderingSystem.debug === true) {
@@ -67,13 +66,13 @@ export class RenderingSystem extends System {
                     if (entity.hasComponent(ShapeRendererComponent)) {
                         const renderer = entity.getComponent(ShapeRendererComponent);
 
-                        this.renderShape(this.offscreenContext, renderer, transform);
+                        this.renderShape(this.offscreenContext, pixelsPerUnit, renderer, transform);
                     }
 
                     if (entity.hasComponent(SpriteRendererComponent)) {
                         const renderer = entity.getComponent(SpriteRendererComponent);
 
-                        this.renderSprite(this.offscreenContext, renderer, transform);
+                        this.renderSprite(this.offscreenContext, pixelsPerUnit, renderer, transform);
                     }
                 });
 
@@ -85,48 +84,58 @@ export class RenderingSystem extends System {
 
     private renderShape(
         context: CanvasRenderingContext2D,
+        pixelsPerUnit: number,
         renderer: ShapeRendererComponent,
         transform: TransformComponent
     ): void {
         const shape = renderer.getShape();
 
         if (shape instanceof Rectangle) {
-            this.renderRectangle(context, shape, transform);
+            this.renderRectangle(context, pixelsPerUnit, shape, transform);
         }
     }
 
     private renderSprite(
         context: CanvasRenderingContext2D,
+        pixelsPerUnit: number,
         renderer: SpriteRendererComponent,
         transform: TransformComponent
     ): void {
         const spriteReferense = renderer.getSprite();
         const sprite = Game.SpriteManager.get(spriteReferense);
 
-        if (sprite !== null) {
-            const x = transform.position.x - sprite.width * 0.5;
-            const y = transform.position.y - sprite.height * 0.5;
+        if (sprite.texture !== null) {
+            const width = transform.scale.x * sprite.factor.x * pixelsPerUnit;
+            const height = transform.scale.y * sprite.factor.y * pixelsPerUnit;
+            const x = transform.position.x * pixelsPerUnit - width * sprite.pivot.x;
+            const y = transform.position.y * pixelsPerUnit - height * sprite.pivot.y;
 
             context.drawImage(
-                sprite,
-                0, 0, sprite.width, sprite.height,
-                x, y, sprite.width, sprite.height
+                sprite.texture,
+                0, 0, sprite.texture.width, sprite.texture.height,
+                x, y, width, height
             );
         }
     }
 
     private renderRectangle(
         context: CanvasRenderingContext2D,
+        pixelsPerUnit: number,
         rectangle: Rectangle,
         transform: TransformComponent
     ): void {
         context.strokeStyle = rectangle.color;
 
+        const width = rectangle.width * pixelsPerUnit;
+        const height = rectangle.height * pixelsPerUnit;
+        const x = transform.position.x * pixelsPerUnit - width * 0.5;
+        const y = transform.position.y * pixelsPerUnit - height * 0.5;
+
         context.strokeRect(
-            Math.round(transform.position.x - rectangle.width * 0.5) + 0.5,
-            Math.round(transform.position.y - rectangle.height * 0.5) + 0.5,
-            Math.round(rectangle.width),
-            Math.round(rectangle.height)
+            Math.round(x) + 0.5,
+            Math.round(y) + 0.5,
+            Math.round(width),
+            Math.round(height)
         );
     }
 }
