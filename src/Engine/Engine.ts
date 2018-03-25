@@ -6,6 +6,7 @@ type OnRender = (deltaT: DOMHighResTimeStamp) => void;
 enum EngineState {Running, Paused}
 
 export class Engine {
+    private static debug = false;
     private static DEFAULT_UPDATE_TIME = 1000 / 60;
     private static DEFAULT_RENDER_TIME = 1000 / 60;
     private static performance = window.performance;
@@ -51,7 +52,10 @@ export class Engine {
         this.lastUpdate = Engine.performance.now();
         const deltaT = this.lastUpdate - timestamp;
 
-        if (deltaT > Engine.DEFAULT_UPDATE_TIME) {
+        if (
+            Engine.debug === true &&
+            deltaT > Engine.DEFAULT_UPDATE_TIME
+        ) {
             this.logger.warn(`Update took ${deltaT}ms`);
         }
 
@@ -69,7 +73,10 @@ export class Engine {
         this.lastRender = Engine.performance.now();
         const deltaT = this.lastRender - timestamp;
 
-        if (deltaT > Engine.DEFAULT_RENDER_TIME) {
+        if (
+            Engine.debug === true &&
+            deltaT > Engine.DEFAULT_RENDER_TIME
+        ) {
             this.logger.warn(`Render took ${deltaT}ms`);
         }
 

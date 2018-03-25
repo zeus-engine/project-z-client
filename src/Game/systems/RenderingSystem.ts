@@ -7,6 +7,7 @@ import { Vector2 } from '../common/Vector2';
 import { SpriteRendererComponent } from '../components/SpriteRendererComponent';
 import { Game } from '../Game';
 import { EntityManager } from '../services/EntityManager';
+import { GameObject } from '../entities/GameObject';
 
 export class RenderingSystem extends System {
     private static debug = true;
@@ -25,17 +26,16 @@ export class RenderingSystem extends System {
     public render(entityManager: EntityManager, deltaT: DOMHighResTimeStamp): void {
         const cameras = entityManager.filterByComponents(CameraComponent);
 
-        cameras.forEach(entity => {
-            const camera = entity.getComponent(CameraComponent);
-            const cameraTransform = entity.getComponent(TransformComponent);
+        for (const cameraObject of cameras) {
+            const camera = cameraObject.getComponent(CameraComponent);
             const pixelsPerUnit = camera.halfHeight / camera.orthographicSize;
             const cameraA = new Vector2(
-                cameraTransform.position.x - camera.orthographicSize,
-                cameraTransform.position.y - camera.orthographicSize
+                cameraObject.transform.position.x - camera.orthographicSize,
+                cameraObject.transform.position.y - camera.orthographicSize
             );
             const cameraB = new Vector2(
-                cameraTransform.position.x + camera.orthographicSize,
-                cameraTransform.position.y + camera.orthographicSize
+                cameraObject.transform.position.x + camera.orthographicSize,
+                cameraObject.transform.position.y + camera.orthographicSize
             );
 
             this.offscreenCanvas.width = camera.target.width;
@@ -45,43 +45,18 @@ export class RenderingSystem extends System {
                 0,
                 0,
                 1,
-                cameraTransform.position.x * -pixelsPerUnit + camera.halfWidth,
-                cameraTransform.position.y * -pixelsPerUnit + camera.halfHeight
+                cameraObject.transform.position.x * -pixelsPerUnit + camera.halfWidth,
+                cameraObject.transform.position.y * -pixelsPerUnit + camera.halfHeight
             );
 
-            entityManager
+            const renderableObjects = entityManager
                 .filterByRange(cameraA, cameraB)
-                .filter(entity => (
-                    entity.hasComponent(ShapeRendererComponent) ||
-                    entity.hasComponent(SpriteRendererComponent)
-                ))
-                .sort((a, b) => {
-                    const aLayer = a.hasComponent(SpriteRendererComponent)
-                        ? a.getComponent(SpriteRendererComponent).sortingLayer
-                        : Game.SortingLayerManager.default;
-                    const bLayer = b.hasComponent(SpriteRendererComponent)
-                        ? b.getComponent(SpriteRendererComponent).sortingLayer
-                        : Game.SortingLayerManager.default;
-                    const aLayerIndex = Game.SortingLayerManager.indexOf(aLayer);
-                    const bLayerIndex = Game.SortingLayerManager.indexOf(bLayer);
+                .filter(this.isRenderable)
+                .sort(this.compareSortingLayers);
 
-                    return aLayerIndex - bLayerIndex;
-                })
-                .forEach(entity => {
-                    const transform = entity.getComponent(TransformComponent);
-
-                    if (entity.hasComponent(ShapeRendererComponent)) {
-                        const renderer = entity.getComponent(ShapeRendererComponent);
-
-                        this.renderShape(this.offscreenContext, pixelsPerUnit, renderer, transform);
-                    }
-
-                    if (entity.hasComponent(SpriteRendererComponent)) {
-                        const renderer = entity.getComponent(SpriteRendererComponent);
-
-                        this.renderSprite(this.offscreenContext, pixelsPerUnit, renderer, transform);
-                    }
-                });
+            for (const object of renderableObjects) {
+                this.renderObject(object, pixelsPerUnit);
+            }
 
             if (RenderingSystem.debug === true) {
                 entityManager.render(this.offscreenContext, pixelsPerUnit);
@@ -90,8 +65,44 @@ export class RenderingSystem extends System {
             const imageBitmap = this.offscreenCanvas.transferToImageBitmap();
 
             camera.context.transferFromImageBitmap(imageBitmap);
-        });
+        }
     }
+
+    private renderObject(object: GameObject, pixelsPerUnit: number): void {
+        const transform = object.getComponent(TransformComponent);
+
+        if (object.hasComponent(ShapeRendererComponent)) {
+            const renderer = object.getComponent(ShapeRendererComponent);
+
+            this.renderShape(this.offscreenContext, pixelsPerUnit, renderer, transform);
+        }
+
+        if (object.hasComponent(SpriteRendererComponent)) {
+            const renderer = object.getComponent(SpriteRendererComponent);
+
+            this.renderSprite(this.offscreenContext, pixelsPerUnit, renderer, transform);
+        }
+    }
+
+    private isRenderable(object: GameObject): boolean {
+        return (
+            object.hasComponent(ShapeRendererComponent) ||
+            object.hasComponent(SpriteRendererComponent)
+        );
+    }
+
+    private compareSortingLayers(a: GameObject, b: GameObject): number {
+        const aLayer = a.hasComponent(SpriteRendererComponent)
+            ? a.getComponent(SpriteRendererComponent).sortingLayer
+            : Game.SortingLayerManager.default;
+        const bLayer = b.hasComponent(SpriteRendererComponent)
+            ? b.getComponent(SpriteRendererComponent).sortingLayer
+            : Game.SortingLayerManager.default;
+        const aLayerIndex = Game.SortingLayerManager.indexOf(aLayer);
+        const bLayerIndex = Game.SortingLayerManager.indexOf(bLayer);
+
+        return aLayerIndex - bLayerIndex;
+    };
 
     private renderShape(
         context: CanvasRenderingContext2D,

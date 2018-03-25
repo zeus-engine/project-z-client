@@ -34,7 +34,7 @@ type Data<T> = {
 };
 
 export class QuadTree<T> {
-    private readonly CAPACITY = 4;
+    private readonly CAPACITY = 16;
 
     private boundary: Rect;
     private parent: QuadTree<T> | null = null;
