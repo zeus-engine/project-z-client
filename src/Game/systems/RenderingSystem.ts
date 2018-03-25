@@ -9,7 +9,7 @@ import { Game } from '../Game';
 import { EntityManager } from '../services/EntityManager';
 
 export class RenderingSystem extends System {
-    private static debug = false;
+    private static debug = true;
     private static imageSmoothingEnabled = false;
     private offscreenCanvas: OffscreenCanvas;
     private offscreenContext: CanvasRenderingContext2D;
@@ -49,10 +49,6 @@ export class RenderingSystem extends System {
                 cameraTransform.position.y * -pixelsPerUnit + camera.halfHeight
             );
 
-            if (RenderingSystem.debug === true) {
-                entityManager.render(this.offscreenContext);
-            }
-
             entityManager
                 .filterByRange(cameraA, cameraB)
                 .filter(entity => (
@@ -86,6 +82,10 @@ export class RenderingSystem extends System {
                         this.renderSprite(this.offscreenContext, pixelsPerUnit, renderer, transform);
                     }
                 });
+
+            if (RenderingSystem.debug === true) {
+                entityManager.render(this.offscreenContext, pixelsPerUnit);
+            }
 
             const imageBitmap = this.offscreenCanvas.transferToImageBitmap();
 

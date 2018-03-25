@@ -33,21 +33,21 @@ type Data<T> = {
     payload: T
 };
 
-export class Tree<T> {
+export class QuadTree<T> {
     private readonly CAPACITY = 4;
 
     private boundary: Rect;
-    private parent: Tree<T> | null = null;
-    private northWest: Tree<T> | null = null;
-    private northEast: Tree<T> | null = null;
-    private southWest: Tree<T> | null = null;
-    private southEast: Tree<T> | null = null;
+    private parent: QuadTree<T> | null = null;
+    private northWest: QuadTree<T> | null = null;
+    private northEast: QuadTree<T> | null = null;
+    private southWest: QuadTree<T> | null = null;
+    private southEast: QuadTree<T> | null = null;
     private storage: Data<T>[] = [];
     private divided: boolean = false;
     private level: number = 0;
     private position: string = 'root';
 
-    constructor(A: Vector2, B: Vector2, parent?: Tree<T>) {
+    constructor(A: Vector2, B: Vector2, parent?: QuadTree<T>) {
         this.boundary = new Rect(A, B);
         this.parent = parent !== undefined ? parent : null;
         this.level = parent !== undefined ? parent.level + 1 : 0;
@@ -58,7 +58,10 @@ export class Tree<T> {
             return false;
         }
 
-        if (this.storage.length < this.CAPACITY) {
+        if (
+            this.divided === false &&
+            this.storage.length < this.CAPACITY
+        ) {
             this.storage.push({
                 point: point,
                 payload: data
@@ -69,6 +72,15 @@ export class Tree<T> {
 
         if (this.divided === false) {
             this.divide();
+
+            this.storage.forEach(item => (
+                this.northEast !== null && this.northEast.insert(item.point, item.payload) ||
+                this.northWest !== null && this.northWest.insert(item.point, item.payload) ||
+                this.southWest !== null && this.southWest.insert(item.point, item.payload) ||
+                this.southEast !== null && this.southEast.insert(item.point, item.payload)
+            ));
+
+            this.storage = [];
         }
 
         return (
@@ -105,15 +117,15 @@ export class Tree<T> {
     /*
     * this method has a public descriptor only for the debug purposes
     */
-    public render(context: CanvasRenderingContext2D): void {
-        const width = Math.abs(this.boundary.b.x - this.boundary.a.x) - this.level * 15;
-        const height = Math.abs(this.boundary.b.y - this.boundary.a.y) - this.level * 15;
+    public render(context: CanvasRenderingContext2D, pixelsPerUnit: number): void {
+        const width = Math.abs(this.boundary.b.x - this.boundary.a.x) * pixelsPerUnit;
+        const height = Math.abs(this.boundary.b.y - this.boundary.a.y) * pixelsPerUnit;
 
-        context.fillStyle = `hsl(${20 * this.level}, 65%, 50%)`;
+        context.strokeStyle = `hsl(${20 * this.level}, 65%, 50%)`;
 
-        context.fillRect(
-            Math.round(this.boundary.a.x) + 0.5,
-            Math.round(this.boundary.a.y) + 0.5,
+        context.strokeRect(
+            Math.round(this.boundary.a.x * pixelsPerUnit) + 0.5,
+            Math.round(this.boundary.a.y * pixelsPerUnit) + 0.5,
             Math.round(width),
             Math.round(height)
         );
@@ -130,7 +142,7 @@ export class Tree<T> {
         ]
             .forEach(child => {
                 if (child != null) {
-                    child.render(context);
+                    child.render(context, pixelsPerUnit);
                 }
             });
     }
@@ -145,10 +157,10 @@ export class Tree<T> {
         const north = new Vector2(center.x, this.boundary.a.y);
         const south = new Vector2(center.x, this.boundary.b.y);
 
-        this.northWest = new Tree<T>(this.boundary.a, center, this);
-        this.northEast = new Tree<T>(north, east, this);
-        this.southWest = new Tree<T>(west, south, this);
-        this.southEast = new Tree<T>(center, this.boundary.b, this);
+        this.northWest = new QuadTree<T>(this.boundary.a, center, this);
+        this.northEast = new QuadTree<T>(north, east, this);
+        this.southWest = new QuadTree<T>(west, south, this);
+        this.southEast = new QuadTree<T>(center, this.boundary.b, this);
 
         this.northWest.position = 'NW';
         this.northEast.position = 'NE';

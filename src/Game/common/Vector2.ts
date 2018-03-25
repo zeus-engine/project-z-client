@@ -1,6 +1,8 @@
+import { ImmutableVector2 } from './ImmutableVector2';
+
 type LerpInterpolant = number; // 0 <= x <= 1
 
-export class Vector2 {
+export class Vector2 extends ImmutableVector2 {
     public static add(a: Vector2, b: Vector2): Vector2 {
         return new Vector2(
             a.x + b.x,
@@ -36,43 +38,31 @@ export class Vector2 {
         );
     }
 
-    private _x: number;
-    private _y: number;
-    private _magnitude: number | null = null;
-    private _normalized: Vector2 | null = null;
-
-    constructor(x: number, y: number) {
-        this._x = x;
-        this._y = y;
+    public get x(): number {
+        return super.x;
     }
 
-    get x(): number {
-        return this._x;
-    }
-
-    set x(value: number) {
+    public set x(value: number) {
         this._x = value;
         this._magnitude = null;
         this._normalized = null;
     }
 
-    get y(): number {
-        return this._y;
+    public get y(): number {
+        return super.y;
     }
 
-    set y(value: number) {
+    public set y(value: number) {
         this._y = value;
         this._magnitude = null;
         this._normalized = null;
     }
 
-    get magnitude(): number {
-        return this._magnitude === null
-            ? this._magnitude = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2))
-            : this._magnitude;
+    public get magnitude(): number {
+        return super.magnitude;
     }
 
-    set magnitude(value: number) {
+    public set magnitude(value: number) {
         const sqrMagnitude = Math.pow(value, 2);
         const sqrX = Math.pow(this._x, 2);
         const sqrY = Math.pow(this._y, 2);
@@ -83,14 +73,7 @@ export class Vector2 {
         this._normalized = null;
     }
 
-    get normalized(): Vector2 {
-        const magnitude = this.magnitude || 1;
-
-        return this._normalized === null
-            ? this._normalized = new Vector2(
-                this.x / magnitude,
-                this.y / magnitude
-            )
-            : this._normalized;
+    public get normalized(): Vector2 {
+        return super.normalized;
     }
 }
