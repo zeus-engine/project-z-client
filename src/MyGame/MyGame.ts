@@ -18,8 +18,8 @@ export class MyGame extends Game {
 
         this.createControls();
 
-        Game.SpriteManager.register('character', '/assets/character.png');
-        Game.SpriteManager.register('grass', '/assets/grass.png');
+        Game.SpriteManager.register('character', 'assets/character.png');
+        Game.SpriteManager.register('grass', 'assets/grass.png');
 
         Game.SpriteManager.get('character').pixelsPerUnit = 36;
         Game.SpriteManager.get('grass').pixelsPerUnit = 36;
