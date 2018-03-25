@@ -17,9 +17,10 @@ export class Character extends GameObject {
         this.addComponent(SpriteRendererComponent, this.spriteRenderer);
         this.addComponent(ScriptComponent, this.script);
         this.shapeRenderer.setShape(new Rectangle(1, 2));
-        this.spriteRenderer.setSprite('character');
-        this.script.setScript(SimpleCharacterControl);
+        this.spriteRenderer.sortingLayer = 'entities';
+        this.spriteRenderer.sprite = 'character';
 
+        this.script.setScript(SimpleCharacterControl);
         this.script.getScript().target = this.transform;
     }
 }

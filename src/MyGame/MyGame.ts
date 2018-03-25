@@ -3,9 +3,7 @@ import { Character } from './prefabs/Character';
 import { RenderingSystem } from '../Game/systems/RenderingSystem';
 import { ScriptingSystem } from '../Game/systems/ScriptingSystem';
 import { Camera } from '../Game/entities/Camera';
-import { CameraComponent } from '../Game/components/CameraComponent';
 import { MainCamera } from './prefabs/MainCamera';
-import { TransformComponent } from '../Game/components/TransformComponent';
 import { Terrain } from './prefabs/Terrain';
 import { Vector2 } from '../Game/common/Vector2';
 
@@ -17,6 +15,9 @@ export class MyGame extends Game {
         this.render = this.render.bind(this);
 
         this.createControls();
+
+        Game.SortingLayerManager.set('terrain', 1);
+        Game.SortingLayerManager.set('entities', 2);
 
         Game.SpriteManager.register('character', '/assets/character.png');
         Game.SpriteManager.register('grass', '/assets/grass.png');
@@ -35,13 +36,14 @@ export class MyGame extends Game {
         cameraA.transform.scale = new Vector2(1, 1);
         cameraA.camera.orthographicSize = 300 / 36;
         cameraB.camera.target = this.createCanvas(300, 300);
-        cameraB.camera.orthographicSize = 150 / 18;
+        cameraB.camera.orthographicSize = 150 / 9;
 
         for (let y = 0; y < 10; y++) {
             for (let x = 0; x < 10; x++) {
                 this.addEntity(new Terrain(new Vector2(x, y)));
             }
         }
+
         this.addEntity(character);
         this.addEntity(cameraA);
         this.addEntity(cameraB);

@@ -27,7 +27,6 @@ export class RenderingSystem extends System {
 
         cameras.forEach(entity => {
             const camera = entity.getComponent(CameraComponent);
-            const cameraContext = camera.target.getContext('bitmaprenderer');
             const cameraTransform = entity.getComponent(TransformComponent);
             const pixelsPerUnit = camera.halfHeight / camera.orthographicSize;
             const cameraA = new Vector2(
@@ -60,6 +59,18 @@ export class RenderingSystem extends System {
                     entity.hasComponent(ShapeRendererComponent) ||
                     entity.hasComponent(SpriteRendererComponent)
                 ))
+                .sort((a, b) => {
+                    const aLayer = a.hasComponent(SpriteRendererComponent)
+                        ? a.getComponent(SpriteRendererComponent).sortingLayer
+                        : Game.SortingLayerManager.default;
+                    const bLayer = b.hasComponent(SpriteRendererComponent)
+                        ? b.getComponent(SpriteRendererComponent).sortingLayer
+                        : Game.SortingLayerManager.default;
+                    const aLayerIndex = Game.SortingLayerManager.indexOf(aLayer);
+                    const bLayerIndex = Game.SortingLayerManager.indexOf(bLayer);
+
+                    return aLayerIndex - bLayerIndex;
+                })
                 .forEach(entity => {
                     const transform = entity.getComponent(TransformComponent);
 
@@ -78,7 +89,7 @@ export class RenderingSystem extends System {
 
             const imageBitmap = this.offscreenCanvas.transferToImageBitmap();
 
-            cameraContext.transferFromImageBitmap(imageBitmap);
+            camera.context.transferFromImageBitmap(imageBitmap);
         });
     }
 
@@ -101,7 +112,7 @@ export class RenderingSystem extends System {
         renderer: SpriteRendererComponent,
         transform: TransformComponent
     ): void {
-        const spriteReferense = renderer.getSprite();
+        const spriteReferense = renderer.sprite;
         const sprite = Game.SpriteManager.get(spriteReferense);
 
         if (sprite.texture !== null) {
