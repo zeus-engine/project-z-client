@@ -1,5 +1,4 @@
 import { Engine } from '../Engine/Engine';
-import { IEntity } from '../Engine/IEntity';
 import { ISystem } from '../Engine/ISystem';
 import { Class } from '../types/Class';
 import { Input } from './services/Input';
@@ -7,11 +6,13 @@ import { ResourceManager } from './services/ResourceManager';
 import { SpriteManager } from './services/SpriteManager';
 import { EntityManager } from './services/EntityManager';
 import { GameObject } from './entities/GameObject';
+import { SortingLayerManager } from './services/SortingLayerManager';
 
 export class Game {
-    static readonly Input: Input = new Input();
-    static readonly ResourceManager = new ResourceManager();
-    static readonly SpriteManager = new SpriteManager(Game.ResourceManager);
+    public static readonly Input: Input = new Input();
+    public static readonly ResourceManager = new ResourceManager();
+    public static readonly SpriteManager = new SpriteManager(Game.ResourceManager);
+    public static readonly SortingLayerManager = new SortingLayerManager();
 
     private engine: Engine;
     private entityManager: EntityManager = new EntityManager();

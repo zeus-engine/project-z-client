@@ -1,15 +1,17 @@
 import { Component } from '../../Engine/Component';
+import { Game } from '../Game';
 
 type SpriteReference = string;
 
 export class SpriteRendererComponent extends Component {
-    private sprite: SpriteReference = 'default';
+    public sortingLayer: string = Game.SortingLayerManager.default;
+    private _sprite: SpriteReference = 'default';
 
-    public setSprite(sprite: SpriteReference): void {
-        this.sprite = sprite;
+    public get sprite(): SpriteReference {
+        return this._sprite;
     }
 
-    public getSprite(): SpriteReference {
-        return this.sprite;
+    public set sprite(sprite: SpriteReference) {
+        this._sprite = sprite;
     }
 }

@@ -2,7 +2,7 @@ import { Class } from '../../types/Class';
 import { IComponent } from '../../Engine/IComponent';
 import { Component } from '../../Engine/Component';
 import { Vector2 } from '../common/Vector2';
-import { Tree } from '../common/Tree';
+import { QuadTree } from '../common/QuadTree';
 import { GameObject } from '../entities/GameObject';
 import { TransformComponent } from '../components/TransformComponent';
 
@@ -11,7 +11,7 @@ type CacheKey = Set<Class<IComponent>>;
 export class EntityManager {
     private entities: GameObject[] = [];
     private cache: Map<CacheKey, GameObject[]> = new Map();
-    private tree: Tree<GameObject> = new Tree(
+    private tree: QuadTree<GameObject> = new QuadTree(
         new Vector2(-1000, -1000),
         new Vector2(+1000, +1000)
     );
@@ -53,8 +53,8 @@ export class EntityManager {
         return this.tree.findInRange(a, b);
     }
 
-    public render(context: CanvasRenderingContext2D): void {
-        this.tree.render(context);
+    public render(context: CanvasRenderingContext2D, pixelsPerUnit: number): void {
+        this.tree.render(context, pixelsPerUnit);
     }
 
     private invalidate(): void {
