@@ -1,14 +1,24 @@
-<code_scheme name="Project">
-  <TypeScriptCodeStyleSettings>
+<code_scheme name="Project" version="173">
+  <JSCodeStyleSettings version="1">
+    <option name="USE_DOUBLE_QUOTES" value="false" />
+    <option name="FORCE_QUOTE_STYlE" value="true" />
+    <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
+  </JSCodeStyleSettings>
+  <TypeScriptCodeStyleSettings version="1">
     <option name="FORCE_SEMICOLON_STYLE" value="true" />
     <option name="USE_PUBLIC_MODIFIER" value="true" />
     <option name="USE_DOUBLE_QUOTES" value="false" />
     <option name="FORCE_QUOTE_STYlE" value="true" />
-    <option name="ENFORCE_TRAILING_COMMA" value="Remove" />
+    <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
     <option name="SPACES_WITHIN_OBJECT_LITERAL_BRACES" value="true" />
     <option name="SPACES_WITHIN_IMPORTS" value="true" />
     <option name="SPACES_WITHIN_INTERPOLATION_EXPRESSIONS" value="true" />
   </TypeScriptCodeStyleSettings>
+  <codeStyleSettings language="JSON">
+    <indentOptions>
+      <option name="INDENT_SIZE" value="4" />
+    </indentOptions>
+  </codeStyleSettings>
   <codeStyleSettings language="TypeScript">
     <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
     <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />

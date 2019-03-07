@@ -9,12 +9,14 @@
         "removeComments": true,
         "strict": true,
         "target": "es6",
+        "isolatedModules": true,
         "lib": [
             "dom",
             "dom.iterable",
-            "es2015",
-            "es2016",
             "es2017"
         ]
-    }
+    },
+    "files": [
+        "./src/index.ts"
+    ]
 }

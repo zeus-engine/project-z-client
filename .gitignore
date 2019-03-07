@@ -1,4 +1,7 @@
 .idea/
 .vscode/
+
+.awcache/
 node_modules/
+
 dist/
