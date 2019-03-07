@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        index: './src/index.ts',
+        index: './src/ExamplePackage/index.ts',
     },
 
     output: {
@@ -34,7 +34,7 @@ module.exports = {
                         options: {
                             useCache: true,
                             reportFiles: [
-                                'src/**/*.{ts}',
+                                'src/**/*.ts',
                             ],
                         },
                     },
@@ -45,7 +45,7 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
+            template: 'src/ExamplePackage/index.html',
             filename: 'index.html',
         }),
     ],
