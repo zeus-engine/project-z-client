@@ -1,6 +1,4 @@
-import { GameObject } from '../../SdkPackage/entities/GameObject';
-import { SpriteRendererComponent } from '../../SdkPackage/components/SpriteRendererComponent';
-import { Vector2 } from '../../SdkPackage/classes/Vector2';
+import { GameObject, SpriteRendererComponent, Vector2 } from '../../SdkPackage';
 
 export class Terrain extends GameObject {
     private spriteRenderer = new SpriteRendererComponent(this);

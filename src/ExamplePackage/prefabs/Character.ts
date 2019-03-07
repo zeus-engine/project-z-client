@@ -1,9 +1,11 @@
-import { ShapeRendererComponent } from '../../SdkPackage/components/ShapeRendererComponent';
-import { Rectangle } from '../../SdkPackage/classes/Rectangle';
-import { GameObject } from '../../SdkPackage/entities/GameObject';
-import { ScriptComponent } from '../../SdkPackage/components/ScriptComponent';
-import { SimpleCharacterControl } from '../../SdkPackage/scripts/SimpleCharacterControl';
-import { SpriteRendererComponent } from '../../SdkPackage/components/SpriteRendererComponent';
+import {
+    GameObject,
+    Rectangle,
+    ScriptComponent,
+    ShapeRendererComponent,
+    SimpleCharacterControl,
+    SpriteRendererComponent,
+} from '../../SdkPackage';
 
 export class Character extends GameObject {
     private shapeRenderer = new ShapeRendererComponent(this);

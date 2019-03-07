@@ -1,11 +1,8 @@
-import { Game } from '../../SdkPackage/classes/Game';
+import { Camera, Game, RenderingSystem, ScriptingSystem, Vector2 } from '../../SdkPackage';
+
 import { Character } from '../prefabs/Character';
-import { RenderingSystem } from '../../SdkPackage/systems/RenderingSystem';
-import { ScriptingSystem } from '../../SdkPackage/systems/ScriptingSystem';
-import { Camera } from '../../SdkPackage/entities/Camera';
 import { MainCamera } from '../prefabs/MainCamera';
 import { Terrain } from '../prefabs/Terrain';
-import { Vector2 } from '../../SdkPackage/classes/Vector2';
 
 export class MyGame extends Game {
     constructor() {

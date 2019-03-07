@@ -1,7 +1,4 @@
-import { Camera } from '../../SdkPackage/entities/Camera';
-import { ScriptComponent } from '../../SdkPackage/components/ScriptComponent';
-import { CameraFollow } from '../../SdkPackage/scripts/CameraFollow';
-import { ITransformComponent } from '../../SdkPackage/interfaces/ITransformComponent';
+import { Camera, CameraFollow, ITransformComponent, ScriptComponent } from '../../SdkPackage';
 
 export class MainCamera extends Camera {
     private script = new ScriptComponent<CameraFollow>(this);
